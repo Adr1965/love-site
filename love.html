@@ -88,14 +88,14 @@
       position: absolute;
       bottom: 0;
       width: 100%;
-      max-height: 400px; /* GIF'in maksimum yüksekliği */
+      max-height: 250px; /* GIF'in maksimum yüksekliği */
       overflow: hidden;
       z-index: 1;
     }
 
     #gif-container iframe {
       width: 100% !important;
-      height: 400px !important; /* GIF'in yüksekliği */
+      height: 250px !important; /* GIF'in yüksekliği */
       border: none;
       pointer-events: none;
     }
@@ -124,8 +124,7 @@
     </div>
   </div>
 
-  <!-- Ses efekti için ses dosyası -->
-  <audio id="clickSound" src="https://www.soundjay.com/button/sounds/button-1.mp3"></audio>
+  <audio id="clickSound" src="https://your-audio-url.com/button-1.mp3"></audio>
 
   <script>
     const noBtn = document.getElementById("noBtn");
@@ -153,7 +152,7 @@
 
     function getRandomPosition(width, height) {
       const screenWidth = window.innerWidth;
-      const screenHeight = window.innerHeight - 400 - 100; // GIF ve üst boşluk
+      const screenHeight = window.innerHeight - 260 - 100; // GIF ve üst boşluk
       const x = Math.floor(Math.random() * (screenWidth - width));
       const y = Math.floor(Math.random() * (screenHeight - height)) + 100;
       return { x, y };

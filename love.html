@@ -88,14 +88,14 @@
       position: absolute;
       bottom: 0;
       width: 100%;
-      max-height: 250px; /* GIF'in maksimum yüksekliği */
+      max-height: 250px;
       overflow: hidden;
       z-index: 1;
     }
 
     #gif-container iframe {
       width: 100% !important;
-      height: 250px !important; /* GIF'in yüksekliği */
+      height: 250px !important;
       border: none;
       pointer-events: none;
     }
@@ -135,7 +135,10 @@
     const buttonWrapper = document.getElementById("button-wrapper");
     const clickSound = document.getElementById("clickSound");
 
-    const noMessages = [
+    let noClickCount = 0;
+    let growInterval;
+
+    const originalNoMessages = [
       "Kalbini dinle...",
       "Gerçekten bu cevabı vermek istiyor musun?",
       "Senin için hâlâ çok değerliyim...",
@@ -144,15 +147,40 @@
       "Beni unutma, lütfen...",
       "Kalbim senin için atıyor...",
       "Birlikte daha güzeliz...",
-      "Seni seviyorum, bunu biliyorsun..."
+      "Seni seviyorum, bunu biliyorsun...",
+      "İçindeki sesi dinle...",
+      "Bir kez daha düşün...",
+      "Kalbini kırmak istemem...",
+      "Mutlu günleri hatırla...",
+      "Beni böyle bırakma...",
+      "Aramızdaki bağ hâlâ güçlü...",
+      "Ben hâlâ seni düşünüyorum...",
+      "Gerçekten bu cevabı mı seçeceksin?",
+      "Dönüş yok, emin misin?",
+      "Yalnızlık güzel değil...",
+      "Hatalar affedilmek içindir...",
+      "İkinci bir şansı hak etmiyor muyuz?",
+      "Beraber geçirdiğimiz zamanları unutma...",
+      "Bu sadece bir oyun değil...",
+      "Kalbinin sesi bu mu?",
+      "Belki de barışmalıyız..."
     ];
 
-    let noClickCount = 0;
-    let growInterval;
+    let noMessages = [...originalNoMessages];
+
+    function getRandomMessage() {
+      if (noMessages.length === 0) {
+        noMessages = [...originalNoMessages];
+      }
+      const index = Math.floor(Math.random() * noMessages.length);
+      const msg = noMessages[index];
+      noMessages.splice(index, 1);
+      return msg;
+    }
 
     function getRandomPosition(width, height) {
       const screenWidth = window.innerWidth;
-      const screenHeight = window.innerHeight - 260 - 100; // GIF ve üst boşluk
+      const screenHeight = window.innerHeight - 260 - 100;
       const x = Math.floor(Math.random() * (screenWidth - width));
       const y = Math.floor(Math.random() * (screenHeight - height)) + 100;
       return { x, y };
@@ -177,14 +205,12 @@
 
         attempts++;
 
-        // En az 100px aralık yoksa yeniden dene
-        if (horizontalDist > (noWidth + yesWidth) / 2 + 100 && verticalDist > (noHeight + yesHeight) / 2 + 100) {
+        if (horizontalDist > (noWidth + yesWidth) / 2 + 100 &&
+            verticalDist > (noHeight + yesHeight) / 2 + 100) {
           break;
         }
-
       } while (attempts < maxAttempts);
 
-      // Butonların ekranın dışına taşmamasını sağla
       noBtn.style.left = Math.max(0, Math.min(noPos.x, window.innerWidth - noWidth)) + "px";
       noBtn.style.top = Math.max(0, Math.min(noPos.y, window.innerHeight - noHeight - 100)) + "px";
 
@@ -193,18 +219,16 @@
     }
 
     noBtn.addEventListener("click", () => {
-      clickSound.currentTime = 0; // Sesin baştan çalmasını sağla
-      clickSound.play(); // Ses efektini çal
+      clickSound.currentTime = 0;
+      clickSound.play();
 
-      if (noClickCount < noMessages.length) {
-        message.textContent = noMessages[noClickCount];
-        noBtn.textContent = noMessages[noClickCount];
-      }
+      const randomMessage = getRandomMessage();
+      message.textContent = randomMessage;
+      noBtn.textContent = randomMessage;
       noClickCount++;
 
       if (noClickCount < 5) {
         placeButtonsNoOverlap();
-
         const scale = 1 + noClickCount * 1.2;
         yesBtn.style.transform = `scale(${scale})`;
       } else if (noClickCount === 5) {
@@ -231,13 +255,12 @@
     });
 
     yesBtn.addEventListener("click", () => {
-      clickSound.currentTime = 0; // Sesin baştan çalmasını sağla
-      clickSound.play(); // Ses efektini çal
+      clickSound.currentTime = 0;
+      clickSound.play();
 
       if (growInterval) clearInterval(growInterval);
 
       document.body.style.backgroundColor = "#28a745";
-
       finalMessage.style.display = "block";
       buttonWrapper.style.display = "none";
       message.style.display = "none";
